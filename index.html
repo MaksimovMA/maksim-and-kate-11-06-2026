@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мы вместе ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+    background: linear-gradient(-45deg, #2b0a1e, #8e1e5f, #d6336c, #5c0f3d, #b02a6b, #3d0c2a);
+    background-size: 400% 400%;
+    animation: gradientShift 18s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ---------- падающие сердечки и звёзды ---------- */
+  .falling {
+    position: fixed;
+    top: -8vh;
+    user-select: none;
+    pointer-events: none;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    z-index: 1;
+  }
+
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0deg);     opacity: 0; }
+    8%   { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateY(115vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ---------- основной блок ---------- */
+  .content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 24px;
+    max-width: 980px;
+    width: 100%;
+  }
+
+  h1 {
+    font-family: 'Great Vibes', cursive;
+    font-weight: 400;
+    font-size: clamp(3.2rem, 10vw, 6.5rem);
+    text-shadow: 0 0 24px rgba(255, 120, 180, .8), 0 4px 18px rgba(0, 0, 0, .35);
+    margin-bottom: 6px;
+  }
+
+  .since {
+    font-size: clamp(.85rem, 2.4vw, 1.1rem);
+    font-weight: 300;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    opacity: .85;
+    margin-bottom: 28px;
+  }
+
+  /* ---------- бьющееся сердце ---------- */
+  .heart {
+    font-size: clamp(3.5rem, 9vw, 5.5rem);
+    line-height: 1;
+    margin-bottom: 34px;
+    display: inline-block;
+    animation: heartbeat 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(255, 80, 150, .9));
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14%      { transform: scale(1.25); }
+    28%      { transform: scale(1); }
+    42%      { transform: scale(1.18); }
+    70%      { transform: scale(1); }
+  }
+
+  /* ---------- стеклянные карточки ---------- */
+  .timer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(10px, 2.5vw, 22px);
+  }
+
+  .card {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .3);
+    padding: clamp(16px, 3vw, 28px) clamp(12px, 2.5vw, 24px);
+    min-width: clamp(120px, 20vw, 170px);
+    transition: transform .3s ease, background .3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px) scale(1.04);
+    background: rgba(255, 255, 255, .18);
+  }
+
+  .card .value {
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+  }
+
+  .card .label {
+    margin-top: 8px;
+    font-size: clamp(.75rem, 1.8vw, .95rem);
+    font-weight: 300;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    opacity: .85;
+  }
+
+  .footer {
+    margin-top: 36px;
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    opacity: .9;
+    text-shadow: 0 0 14px rgba(255, 120, 180, .7);
+  }
+</style>
+</head>
+<body>
+
+<div class="content">
+  <h1>Мы вместе</h1>
+  <div class="since">с 11 июня 2026 года</div>
+  <div class="heart">❤️</div>
+
+  <div class="timer">
+    <div class="card"><div class="value" id="days">0</div><div class="label" id="days-label">дней</div></div>
+    <div class="card"><div class="value" id="hours">0</div><div class="label" id="hours-label">часов</div></div>
+    <div class="card"><div class="value" id="minutes">0</div><div class="label" id="minutes-label">минут</div></div>
+    <div class="card"><div class="value" id="seconds">0</div><div class="label" id="seconds-label">секунд</div></div>
+  </div>
+
+  <div class="footer">Максим &amp; Катя</div>
+</div>
+
+<script>
+  const START = new Date(2026, 5, 11, 0, 0, 0); // 11 июня 2026
+
+  // правильные русские склонения: 1 день, 2 дня, 5 дней…
+  function plural(n, one, few, many) {
+    const a = Math.abs(n) % 100;
+    const b = a % 10;
+    if (a > 10 && a < 20) return many;
+    if (b > 1 && b < 5) return few;
+    if (b === 1) return one;
+    return many;
+  }
+
+  const fields = {
+    days:    { one: 'день',   few: 'дня',    many: 'дней'   },
+    hours:   { one: 'час',    few: 'часа',   many: 'часов'  },
+    minutes: { one: 'минута', few: 'минуты', many: 'минут'  },
+    seconds: { one: 'секунда', few: 'секунды', many: 'секунд' }
+  };
+
+  function tick() {
+    let diff = Math.max(0, Math.floor((Date.now() - START.getTime()) / 1000));
+
+    const values = {
+      days:    Math.floor(diff / 86400),
+      hours:   Math.floor(diff / 3600) % 24,
+      minutes: Math.floor(diff / 60) % 60,
+      seconds: diff % 60
+    };
+
+    for (const key in values) {
+      document.getElementById(key).textContent = values[key];
+      const f = fields[key];
+      document.getElementById(key + '-label').textContent = plural(values[key], f.one, f.few, f.many);
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+
+  // падающие сердечки и звёзды
+  const symbols = ['❤', '💗', '💖', '✦', '✧', '★', '✩', '💕'];
+  for (let i = 0; i < 36; i++) {
+    const el = document.createElement('span');
+    el.className = 'falling';
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (12 + Math.random() * 22) + 'px';
+    el.style.opacity = .4 + Math.random() * .6;
+    el.style.animationDuration = (6 + Math.random() * 9) + 's';
+    el.style.animationDelay = -(Math.random() * 15) + 's';
+    el.style.color = Math.random() > .5 ? '#ffb3d1' : '#fff0c9';
+    el.style.textShadow = '0 0 8px currentColor';
+    document.body.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
