@@ -1,0 +1,14 @@
+{
+  "name": "Мы вместе — Максим & Катя",
+  "short_name": "Мы вместе",
+  "description": "Счётчик нашей истории с 11 июня 2026 года",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#14080e",
+  "theme_color": "#14080e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

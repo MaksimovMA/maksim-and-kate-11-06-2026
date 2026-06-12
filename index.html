@@ -4,50 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Мы вместе</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<meta name="description" content="Максим и Катя — вместе с 11 июня 2026 года">
+
+<meta property="og:title" content="Мы вместе ♥">
+<meta property="og:description" content="Максим и Катя — счётчик нашей истории с 11 июня 2026 года">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://maksimovma.github.io/maksim-and-kate-11-06-2026/">
+<meta property="og:image" content="https://maksimovma.github.io/maksim-and-kate-11-06-2026/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14080e">
+
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
   :root {
     --gold: #d6b27c;
     --gold-soft: #e9d3ae;
     --gold-dim: rgba(214, 178, 124, .45);
+    --gold-faint: rgba(214, 178, 124, .22);
     --ink: #f5efe6;
+    --ink-dim: rgba(245, 239, 230, .65);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html, body { height: 100%; overflow: hidden; }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Jost', sans-serif;
     color: var(--ink);
+    background: #14080e;
+    overflow-x: hidden;
+  }
+
+  /* фон отдельным фиксированным слоем — background-attachment: fixed
+     ненадёжен в мобильных браузерах */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     background:
       radial-gradient(ellipse 120% 90% at 50% -20%, rgba(112, 38, 62, .55), transparent 60%),
       radial-gradient(ellipse 100% 80% at 50% 120%, rgba(58, 22, 40, .6), transparent 60%),
       linear-gradient(160deg, #14080e 0%, #1d0b14 45%, #120710 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
-  /* мягкое дыхание света за заголовком */
+  /* мягкое дыхание света за заголовком, следует за курсором/наклоном */
   .glow {
     position: fixed;
-    top: 18%;
+    top: 22%;
     left: 50%;
     width: min(70vw, 700px);
     height: min(70vw, 700px);
-    transform: translate(-50%, -50%);
+    transform: translate(calc(-50% + var(--px, 0px)), calc(-50% + var(--py, 0px)));
     background: radial-gradient(circle, rgba(199, 122, 122, .14), transparent 65%);
     animation: breathe 9s ease-in-out infinite;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
+    transition: transform 1.2s cubic-bezier(.2, .8, .2, 1);
   }
 
   @keyframes breathe {
-    0%, 100% { opacity: .6; transform: translate(-50%, -50%) scale(1); }
-    50%      { opacity: 1;  transform: translate(-50%, -50%) scale(1.12); }
+    0%, 100% { opacity: .6; }
+    50%      { opacity: 1; }
   }
 
   /* ---------- золотая пыль ---------- */
@@ -68,14 +92,55 @@
     100% { transform: translateY(-108vh) translateX(var(--sway, 20px)); opacity: 0; }
   }
 
-  /* ---------- основной блок ---------- */
-  .content {
+  /* ---------- секции ---------- */
+  section {
     position: relative;
     z-index: 2;
     text-align: center;
-    padding: 24px;
+    padding: clamp(48px, 9vh, 96px) 24px;
     max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  /* появление при загрузке / скролле */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 1.1s ease var(--d, 0s), transform 1.1s ease var(--d, 0s);
+  }
+
+  .reveal.shown { opacity: 1; transform: none; }
+
+  /* ---------- фото (показывается, если в репозитории есть photo.jpg) ---------- */
+  .photo-frame {
+    display: none;
+    width: clamp(110px, 18vw, 150px);
+    height: clamp(140px, 23vw, 190px);
+    margin-bottom: 26px;
+    padding: 5px;
+    border: 1px solid var(--gold-faint);
+    border-radius: 50% / 42%;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45), inset 0 0 24px rgba(0, 0, 0, .5);
+  }
+
+  .photo-frame.has-photo { display: block; }
+
+  .photo-frame img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50% / 42%;
+    filter: sepia(.18) saturate(.9) brightness(.96);
   }
 
   h1 {
@@ -89,6 +154,16 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: var(--gold-soft);
+  }
+
+  h2 {
+    font-family: 'Cormorant', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 4.5vw, 2.5rem);
+    letter-spacing: .05em;
+    color: var(--gold-soft);
+    margin-bottom: clamp(28px, 5vh, 48px);
   }
 
   .rule {
@@ -118,6 +193,8 @@
     display: block;
     animation: pulse 2.8s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(214, 178, 124, .35));
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
   @keyframes pulse {
@@ -126,13 +203,39 @@
     32%      { transform: scale(1); }
   }
 
+  .heart.burst { animation: bigbeat .9s ease-in-out; }
+
+  @keyframes bigbeat {
+    0%, 100% { transform: scale(1); }
+    20%      { transform: scale(1.45); }
+    40%      { transform: scale(1.05); }
+    60%      { transform: scale(1.3); }
+  }
+
+  .spark {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold-soft);
+    box-shadow: 0 0 8px 2px var(--gold-dim);
+    pointer-events: none;
+    z-index: 5;
+    animation: spark-fly 1.1s ease-out forwards;
+  }
+
+  @keyframes spark-fly {
+    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--sx), var(--sy)) scale(.2); opacity: 0; }
+  }
+
   .since {
     font-size: clamp(.78rem, 2.2vw, .95rem);
     font-weight: 300;
     letter-spacing: .42em;
     text-indent: .42em;
     text-transform: uppercase;
-    color: rgba(245, 239, 230, .65);
+    color: var(--ink-dim);
     margin-bottom: clamp(36px, 7vh, 64px);
   }
 
@@ -149,7 +252,7 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     background: linear-gradient(165deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .015));
-    border: 1px solid rgba(214, 178, 124, .22);
+    border: 1px solid var(--gold-faint);
     border-radius: 14px;
     box-shadow: 0 24px 48px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .07);
     padding: clamp(22px, 3.2vw, 34px) clamp(14px, 2.6vw, 28px);
@@ -179,6 +282,14 @@
     line-height: 1;
     font-variant-numeric: tabular-nums;
     color: var(--ink);
+    display: inline-block;
+  }
+
+  .value.flip { animation: digit .5s ease; }
+
+  @keyframes digit {
+    0%   { opacity: 0; transform: translateY(-.35em); filter: blur(2px); }
+    100% { opacity: 1; transform: none; filter: none; }
   }
 
   .card .label {
@@ -191,8 +302,21 @@
     color: var(--gold-dim);
   }
 
-  .footer {
-    margin-top: clamp(36px, 7vh, 60px);
+  /* ---------- «а это…» необычные единицы ---------- */
+  .fun {
+    margin-top: clamp(28px, 5vh, 44px);
+    min-height: 1.6em;
+    font-family: 'Cormorant', serif;
+    font-style: italic;
+    font-size: clamp(1.05rem, 2.8vw, 1.45rem);
+    color: var(--ink-dim);
+    transition: opacity .8s ease;
+  }
+
+  .fun.fade { opacity: 0; }
+
+  .names {
+    margin-top: clamp(30px, 6vh, 52px);
     font-family: 'Cormorant', serif;
     font-style: italic;
     font-weight: 400;
@@ -200,36 +324,322 @@
     letter-spacing: .08em;
     color: rgba(233, 211, 174, .8);
   }
+
+  /* ---------- песочные часы ---------- */
+  .hourglass-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hourglass {
+    width: clamp(220px, 42vw, 300px);
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 22px 36px rgba(0, 0, 0, .5));
+  }
+
+  .hg-grain {
+    fill: #f0ddb4;
+    opacity: 0;
+  }
+
+  #streamCore { animation: pour .45s linear infinite; }
+
+  @keyframes pour {
+    to { stroke-dashoffset: -7; }
+  }
+
+  .hg-shimmer { animation: shimmer 5s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: .35; }
+    50%      { opacity: .7; }
+  }
+
+  .milestone-caption {
+    margin-top: 30px;
+    font-size: clamp(.8rem, 2.2vw, .95rem);
+    font-weight: 300;
+    letter-spacing: .3em;
+    text-indent: .3em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .milestone-days {
+    margin-top: 12px;
+    font-family: 'Cormorant', serif;
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    font-weight: 300;
+    color: var(--gold-soft);
+  }
+
+  .progress {
+    margin: 26px auto 0;
+    width: min(420px, 78vw);
+    height: 1px;
+    background: rgba(255, 255, 255, .1);
+    position: relative;
+  }
+
+  .progress .bar {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold-soft));
+    box-shadow: 0 0 8px var(--gold-dim);
+    transition: width 1.6s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .progress .bar::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: -2.5px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-soft);
+    box-shadow: 0 0 10px 2px var(--gold-dim);
+  }
+
+  /* ---------- таймлайн вех ---------- */
+  .timeline {
+    position: relative;
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--gold-faint) 12%, var(--gold-faint) 88%, transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    padding: 0 0 34px 40px;
+  }
+
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 7px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid var(--gold-dim);
+    background: transparent;
+  }
+
+  .tl-item.done::before {
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold-dim);
+  }
+
+  .tl-item .tl-date {
+    font-size: .78rem;
+    font-weight: 300;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+
+  .tl-item .tl-title {
+    margin-top: 6px;
+    font-family: 'Cormorant', serif;
+    font-size: clamp(1.25rem, 3vw, 1.55rem);
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .tl-item.future { opacity: .55; }
+
+  /* ---------- цитата ---------- */
+  .quote {
+    font-family: 'Cormorant', serif;
+    font-style: italic;
+    font-size: clamp(1.3rem, 3.4vw, 1.9rem);
+    line-height: 1.5;
+    color: var(--ink-dim);
+    max-width: 640px;
+    margin: 0 auto;
+    min-height: 3em;
+    transition: opacity .9s ease;
+  }
+
+  .quote.fade { opacity: 0; }
+
+  .quote::before { content: '« '; color: var(--gold-dim); }
+  .quote::after  { content: ' »'; color: var(--gold-dim); }
+
+  /* ---------- музыка (кнопка видна, если в репозитории есть music.mp3) ---------- */
+  .music-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 6;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--gold-faint);
+    background: rgba(20, 8, 14, .6);
+    backdrop-filter: blur(10px);
+    color: var(--gold-soft);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .3s ease;
+  }
+
+  .music-btn.available { display: flex; }
+  .music-btn:hover { border-color: var(--gold-dim); }
+  .music-btn.playing { animation: pulse 2.8s ease-in-out infinite; }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 30px 24px 44px;
+    font-size: .72rem;
+    font-weight: 300;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: rgba(245, 239, 230, .3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow, .dust, .heart, .hg-shimmer { animation: none !important; }
+    .reveal { transition: none; opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
 
+<div class="bg"></div>
 <div class="glow"></div>
 
-<div class="content">
-  <h1>Мы вместе</h1>
+<!-- ГЛАВНЫЙ ЭКРАН -->
+<section class="hero">
+  <!-- добавьте photo.jpg в корень репозитория — портрет появится сам -->
+  <div class="photo-frame reveal" style="--d:.05s"><img src="photo.jpg" alt="Максим и Катя" id="photo"></div>
 
-  <div class="rule">
-    <svg class="heart" viewBox="0 0 32 29" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <h1 class="reveal" style="--d:.1s">Мы вместе</h1>
+
+  <div class="rule reveal" style="--d:.35s">
+    <svg class="heart" id="heart" viewBox="0 0 32 29" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M16 27.5C13 24.7 2 16.6 2 9.4 2 5 5.4 1.5 9.7 1.5c2.6 0 5 1.3 6.3 3.4C17.3 2.8 19.7 1.5 22.3 1.5 26.6 1.5 30 5 30 9.4c0 7.2-11 15.3-14 18.1z"
             stroke="#d6b27c" stroke-width="1.4" stroke-linejoin="round"/>
     </svg>
   </div>
 
-  <div class="since">с 11 июня 2026 года</div>
+  <div class="since reveal" style="--d:.55s">с 11 июня 2026 года</div>
 
-  <div class="timer">
+  <div class="timer reveal" style="--d:.75s">
     <div class="card"><div class="value" id="days">0</div><div class="label" id="days-label">дней</div></div>
     <div class="card"><div class="value" id="hours">0</div><div class="label" id="hours-label">часов</div></div>
     <div class="card"><div class="value" id="minutes">0</div><div class="label" id="minutes-label">минут</div></div>
     <div class="card"><div class="value" id="seconds">0</div><div class="label" id="seconds-label">секунд</div></div>
   </div>
 
-  <div class="footer">Максим&nbsp;&amp;&nbsp;Катя</div>
-</div>
+  <div class="fun reveal" id="fun" style="--d:1s"></div>
+
+  <div class="names reveal" style="--d:1.15s">Максим&nbsp;&amp;&nbsp;Катя</div>
+</section>
+
+<!-- ПЕСОЧНЫЕ ЧАСЫ -->
+<section>
+  <div class="hourglass-wrap reveal">
+    <svg class="hourglass" viewBox="0 0 240 250" xmlns="http://www.w3.org/2000/svg" aria-label="Песочные часы — время до следующей вехи">
+      <defs>
+        <linearGradient id="sandGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f0ddb4"/>
+          <stop offset="1" stop-color="#c79a5e"/>
+        </linearGradient>
+        <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"   stop-color="rgba(255,255,255,.10)"/>
+          <stop offset=".25" stop-color="rgba(255,255,255,.02)"/>
+          <stop offset=".75" stop-color="rgba(255,255,255,.015)"/>
+          <stop offset="1"   stop-color="rgba(255,255,255,.08)"/>
+        </linearGradient>
+        <linearGradient id="frameGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0"  stop-color="#8a6a3c"/>
+          <stop offset=".5" stop-color="#e9d3ae"/>
+          <stop offset="1"  stop-color="#8a6a3c"/>
+        </linearGradient>
+        <!-- колба: горлышко сверху, плавно расширяется к округлому дну -->
+        <clipPath id="bulbClip">
+          <path d="M114 18 C114 52 78 74 64 104 C52 130 54 166 78 186 C90 196 104 201 120 201 C136 201 150 196 162 186 C186 166 188 130 176 104 C162 74 126 52 126 18 Z"/>
+        </clipPath>
+      </defs>
+
+      <!-- песок в колбе (уровень управляется из JS) -->
+      <g clip-path="url(#bulbClip)">
+        <rect id="sandFill" x="50" y="201" width="140" height="190" fill="url(#sandGrad)"/>
+        <!-- горка под струёй -->
+        <ellipse id="sandMound" cx="120" cy="201" rx="46" ry="10" fill="url(#sandGrad)"/>
+        <!-- блик на песке -->
+        <ellipse id="sandSheen" class="hg-shimmer" cx="104" cy="201" rx="20" ry="3.5" fill="rgba(255,244,214,.55)"/>
+      </g>
+
+      <!-- стекло поверх песка -->
+      <path d="M114 18 C114 52 78 74 64 104 C52 130 54 166 78 186 C90 196 104 201 120 201 C136 201 150 196 162 186 C186 166 188 130 176 104 C162 74 126 52 126 18 Z"
+            fill="url(#glassGrad)" stroke="#d6b27c" stroke-width="1.5" stroke-linejoin="round"/>
+      <!-- блик на стекле -->
+      <path d="M86 96 C74 118 72 150 88 172" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- струя песка (поверх стекла — она внутри колбы по оси) -->
+      <!-- у вертикальной линии нулевой bbox — градиентная обводка не рисуется, нужен сплошной цвет -->
+      <line id="streamCore" x1="120" y1="17" x2="120" y2="195" stroke="#dcb886" stroke-width="2"
+            stroke-dasharray="3 4" opacity=".75"/>
+      <g id="stream"></g>
+
+      <!-- золотая оправа: верхняя перемычка у горлышка и основание -->
+      <rect x="96" y="8" width="48" height="9" rx="4.5" fill="url(#frameGrad)"/>
+      <rect x="58" y="208" width="124" height="11" rx="5.5" fill="url(#frameGrad)"/>
+      <rect x="44" y="222" width="152" height="13" rx="6.5" fill="url(#frameGrad)"/>
+      <!-- боковые колонны (нижние половины) -->
+      <rect x="52" y="12" width="5" height="198" rx="2.5" fill="url(#frameGrad)" opacity=".85"/>
+      <rect x="183" y="12" width="5" height="198" rx="2.5" fill="url(#frameGrad)" opacity=".85"/>
+    </svg>
+
+    <div class="milestone-caption" id="ms-caption">до следующей вехи</div>
+    <div class="milestone-days" id="ms-days"></div>
+    <div class="progress"><div class="bar" id="ms-bar"></div></div>
+  </div>
+</section>
+
+<!-- ВЕХИ -->
+<section>
+  <h2 class="reveal">Наши вехи</h2>
+  <div class="timeline reveal" id="timeline"></div>
+</section>
+
+<!-- ЦИТАТА -->
+<section>
+  <div class="quote reveal" id="quote"></div>
+</section>
+
+<footer>Максим &amp; Катя · 11.06.2026</footer>
+
+<!-- добавьте music.mp3 в корень репозитория — кнопка появится сама -->
+<audio id="music" src="music.mp3" loop preload="none"></audio>
+<button class="music-btn" id="music-btn" aria-label="Включить музыку">♪</button>
 
 <script>
   const START = new Date(2026, 5, 11, 0, 0, 0); // 11 июня 2026
+  const DAY = 86400000;
 
   // правильные русские склонения: 1 день, 2 дня, 5 дней…
   function plural(n, one, few, many) {
@@ -241,12 +651,17 @@
     return many;
   }
 
+  const fmt = n => n.toLocaleString('ru-RU');
+
+  /* ---------- счётчик ---------- */
   const fields = {
     days:    { one: 'день',    few: 'дня',     many: 'дней'   },
     hours:   { one: 'час',     few: 'часа',    many: 'часов'  },
     minutes: { one: 'минута',  few: 'минуты',  many: 'минут'  },
     seconds: { one: 'секунда', few: 'секунды', many: 'секунд' }
   };
+
+  const prev = {};
 
   function tick() {
     let diff = Math.max(0, Math.floor((Date.now() - START.getTime()) / 1000));
@@ -259,16 +674,248 @@
     };
 
     for (const key in values) {
-      document.getElementById(key).textContent = values[key];
-      const f = fields[key];
-      document.getElementById(key + '-label').textContent = plural(values[key], f.one, f.few, f.many);
+      const el = document.getElementById(key);
+      if (prev[key] !== values[key]) {
+        el.textContent = values[key];
+        el.classList.remove('flip');
+        void el.offsetWidth; // перезапуск анимации
+        el.classList.add('flip');
+        const f = fields[key];
+        document.getElementById(key + '-label').textContent = plural(values[key], f.one, f.few, f.many);
+        prev[key] = values[key];
+      }
     }
   }
 
   tick();
   setInterval(tick, 1000);
 
-  // медленно поднимающаяся золотая пыль
+  /* ---------- необычные единицы ---------- */
+  const funUnits = [
+    s => `это ${fmt(Math.floor(s / 3600))} ${plural(Math.floor(s / 3600), 'час', 'часа', 'часов')} рядом`,
+    s => `это ${fmt(Math.floor(s / 60))} ${plural(Math.floor(s / 60), 'минута', 'минуты', 'минут')} вдвоём`,
+    s => `это ~${fmt(Math.floor(s * 70 / 60))} ${plural(Math.floor(s * 70 / 60), 'удар сердца', 'удара сердца', 'ударов сердца')}`,
+    s => `это ${fmt(Math.floor(s / 86400))} ${plural(Math.floor(s / 86400), 'рассвет', 'рассвета', 'рассветов')} вместе`,
+    s => `это ${fmt(Math.floor(s / 604800))} ${plural(Math.floor(s / 604800), 'неделя', 'недели', 'недель')} нашей истории`
+  ];
+
+  let funIdx = 0;
+  const funEl = document.getElementById('fun');
+
+  function rotateFun() {
+    const s = Math.max(0, Math.floor((Date.now() - START.getTime()) / 1000));
+    funEl.classList.add('fade');
+    setTimeout(() => {
+      funEl.textContent = funUnits[funIdx % funUnits.length](s);
+      funIdx++;
+      funEl.classList.remove('fade');
+    }, 800);
+  }
+
+  const s0 = Math.max(0, Math.floor((Date.now() - START.getTime()) / 1000));
+  funEl.textContent = funUnits[0](s0);
+  funIdx = 1;
+  setInterval(rotateFun, 6000);
+
+  /* ---------- вехи ---------- */
+  function addDays(d, n) { return new Date(d.getTime() + n * DAY); }
+  function addMonths(d, n) { const r = new Date(d); r.setMonth(r.getMonth() + n); return r; }
+
+  function buildMilestones() {
+    const ms = [
+      { date: START, title: 'Начало нашей истории' },
+      { date: addDays(START, 100),  title: '100 дней вместе' },
+      { date: addMonths(START, 6),  title: 'Полгода вместе' },
+      { date: addDays(START, 365),  title: 'Один год вместе' },
+      { date: addDays(START, 500),  title: '500 дней вместе' },
+      { date: addDays(START, 1000), title: '1000 дней вместе' }
+    ];
+    for (let y = 2; y <= 50; y++) {
+      ms.push({ date: addMonths(START, 12 * y), title: `${y} ${plural(y, 'год', 'года', 'лет')} вместе` });
+    }
+    return ms.sort((a, b) => a.date - b.date);
+  }
+
+  const milestones = buildMilestones();
+  const now = new Date();
+  const nextIdx = milestones.findIndex(m => m.date > now);
+  const nextMs = milestones[nextIdx];
+  const prevMs = milestones[nextIdx - 1] || milestones[0];
+
+  const daysLeft = Math.ceil((nextMs.date - now) / DAY);
+  const span = nextMs.date - prevMs.date;
+  const progress = Math.min(1, Math.max(0.04, (now - prevMs.date) / span));
+
+  document.getElementById('ms-caption').textContent = `до вехи «${nextMs.title}»`;
+  document.getElementById('ms-days').textContent =
+    daysLeft <= 0 ? 'сегодня!' : `${fmt(daysLeft)} ${plural(daysLeft, 'день', 'дня', 'дней')}`;
+
+  /* ---------- таймлайн ---------- */
+  const dateFmt = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  const tl = document.getElementById('timeline');
+  const shown = milestones.slice(0, Math.max(nextIdx + 3, 6));
+
+  // сюда можно добавить личные события: { date: new Date(2026, 5, 20), title: 'Первое путешествие' }
+  const personal = [];
+
+  [...shown, ...personal].sort((a, b) => a.date - b.date).forEach(m => {
+    const item = document.createElement('div');
+    item.className = 'tl-item ' + (m.date <= now ? 'done' : 'future');
+    item.innerHTML = `<div class="tl-date">${dateFmt.format(m.date)}</div><div class="tl-title">${m.title}</div>`;
+    tl.appendChild(item);
+  });
+
+  /* ---------- песочные часы ---------- */
+  // песок в колбе: уровень соответствует прогрессу до следующей вехи
+  const SAND_TOP = 96;    // y верхней границы песка при 100%
+  const SAND_BOTTOM = 201; // y дна колбы
+  const sandY = SAND_BOTTOM - (SAND_BOTTOM - SAND_TOP) * progress;
+
+  const sandFill = document.getElementById('sandFill');
+  const mound = document.getElementById('sandMound');
+  const sheen = document.getElementById('sandSheen');
+
+  sandFill.setAttribute('y', sandY);
+  document.getElementById('streamCore').setAttribute('y2', sandY - 2);
+  mound.setAttribute('cy', sandY);
+  mound.setAttribute('rx', 30 + 26 * progress);
+  sheen.setAttribute('cy', sandY - 2);
+  sheen.setAttribute('cx', 120 - (16 + 10 * progress) * .8);
+
+  document.getElementById('ms-bar').style.width = (progress * 100).toFixed(1) + '%';
+
+  // непрерывно сыплющиеся песчинки
+  const streamG = document.getElementById('stream');
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const grains = [];
+
+  for (let i = 0; i < 26; i++) {
+    const g = document.createElementNS(SVG_NS, 'circle');
+    g.setAttribute('class', 'hg-grain');
+    g.setAttribute('r', (1.1 + Math.random() * 1.2).toFixed(2));
+    streamG.appendChild(g);
+    grains.push({
+      el: g,
+      t: Math.random(),                       // фаза падения 0..1
+      speed: 0.012 + Math.random() * 0.008,
+      x: 120 + (Math.random() * 5 - 2.5),     // лёгкий разброс струи
+      wobble: Math.random() * Math.PI * 2
+    });
+  }
+
+  let raf;
+  function animateSand() {
+    const targetY = parseFloat(sandFill.getAttribute('y'));
+    for (const g of grains) {
+      g.t += g.speed;
+      if (g.t >= 1) {
+        g.t = 0;
+        g.x = 120 + (Math.random() * 5 - 2.5);
+      }
+      const y = 17 + (targetY - 14) * g.t; // от горлышка до поверхности песка
+      const x = g.x + Math.sin(g.t * 14 + g.wobble) * 1.1;
+      g.el.setAttribute('cx', x.toFixed(1));
+      g.el.setAttribute('cy', y.toFixed(1));
+      // проявление и затухание у поверхности; inline-стиль, т.к. CSS-класс
+      // с opacity:0 имеет приоритет над SVG-атрибутом
+      const o = g.t < 0.08 ? g.t / 0.08 : (g.t > 0.92 ? (1 - g.t) / 0.08 : 1);
+      g.el.style.opacity = (o * 0.9).toFixed(2);
+    }
+    raf = requestAnimationFrame(animateSand);
+  }
+
+  const motionOk = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (motionOk) animateSand();
+
+  // экономим батарею, когда вкладка не видна
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else if (motionOk) animateSand();
+  });
+
+  /* ---------- появление при скролле ---------- */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ---------- пасхалка: тап по сердцу ---------- */
+  const heart = document.getElementById('heart');
+  heart.addEventListener('click', () => {
+    heart.classList.remove('burst');
+    void heart.offsetWidth;
+    heart.classList.add('burst');
+    const r = heart.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (let i = 0; i < 14; i++) {
+      const s = document.createElement('span');
+      s.className = 'spark';
+      const ang = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 70;
+      s.style.left = cx + 'px';
+      s.style.top = cy + 'px';
+      s.style.setProperty('--sx', Math.cos(ang) * dist + 'px');
+      s.style.setProperty('--sy', Math.sin(ang) * dist + 'px');
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1200);
+    }
+  });
+
+  /* ---------- параллакс ---------- */
+  const glow = document.querySelector('.glow');
+
+  window.addEventListener('mousemove', e => {
+    const dx = (e.clientX / innerWidth - .5) * 50;
+    const dy = (e.clientY / innerHeight - .5) * 35;
+    glow.style.setProperty('--px', dx + 'px');
+    glow.style.setProperty('--py', dy + 'px');
+  }, { passive: true });
+
+  window.addEventListener('deviceorientation', e => {
+    if (e.gamma == null) return;
+    glow.style.setProperty('--px', Math.max(-40, Math.min(40, e.gamma * 1.4)) + 'px');
+    glow.style.setProperty('--py', Math.max(-30, Math.min(30, (e.beta - 45) * 0.8)) + 'px');
+  }, { passive: true });
+
+  /* ---------- цитаты ---------- */
+  const quotes = [
+    'Любовь — это не смотреть друг на друга, а смотреть вместе в одном направлении',
+    'Каждая секунда с тобой — лучшая секунда моей жизни',
+    'Лучшее, что можно держать в жизни, — это друг друга',
+    'Время, проведённое с тобой, не считается прожитым — оно считается подаренным'
+  ];
+
+  const quoteEl = document.getElementById('quote');
+  let qIdx = Math.floor(Math.random() * quotes.length);
+  quoteEl.textContent = quotes[qIdx];
+
+  setInterval(() => {
+    quoteEl.classList.add('fade');
+    setTimeout(() => {
+      qIdx = (qIdx + 1) % quotes.length;
+      quoteEl.textContent = quotes[qIdx];
+      quoteEl.classList.remove('fade');
+    }, 900);
+  }, 12000);
+
+  /* ---------- фото и музыка (если файлы добавлены в репозиторий) ---------- */
+  const photo = document.getElementById('photo');
+  photo.addEventListener('load', () => photo.closest('.photo-frame').classList.add('has-photo'));
+
+  const music = document.getElementById('music');
+  const musicBtn = document.getElementById('music-btn');
+
+  fetch('music.mp3', { method: 'HEAD' })
+    .then(r => { if (r.ok) musicBtn.classList.add('available'); })
+    .catch(() => {});
+
+  musicBtn.addEventListener('click', () => {
+    if (music.paused) { music.play(); musicBtn.classList.add('playing'); musicBtn.textContent = '♫'; }
+    else { music.pause(); musicBtn.classList.remove('playing'); musicBtn.textContent = '♪'; }
+  });
+
+  /* ---------- золотая пыль ---------- */
   for (let i = 0; i < 28; i++) {
     const el = document.createElement('span');
     el.className = 'dust';
@@ -282,6 +929,9 @@
     el.style.animationDelay = -(Math.random() * 30) + 's';
     document.body.appendChild(el);
   }
+
+  /* ---------- PWA ---------- */
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 
 </body>
